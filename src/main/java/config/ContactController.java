@@ -14,11 +14,11 @@ public TokenDto tokenDto;
     @BeforeSuite
     public void login() {
         AuthenticationController authenticationController = new AuthenticationController();
-        authenticationController.requestRegLogin(USER_LOGIN,LOGIN_PATH)
+       tokenDto = authenticationController.requestRegLogin(USER_LOGIN,LOGIN_PATH)
                 .as(TokenDto.class);
     }
 
-    public Response requestContacts(ContactDtoLombok contact, String token) {
+    protected Response requestContacts(ContactDtoLombok contact, String token) {
         return given()
                 .body(contact)
                 .contentType(ContentType.JSON)

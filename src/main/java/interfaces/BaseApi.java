@@ -22,7 +22,7 @@ public interface BaseApi {
 
     OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
 
-   RegistrationBodyDto USER_LOGIN = RegistrationBodyDto.builder()
+   UserDto USER_LOGIN = UserDto.builder()
            .username("rom@gmail.com")
            .password("7206@Rom")
            .build();
