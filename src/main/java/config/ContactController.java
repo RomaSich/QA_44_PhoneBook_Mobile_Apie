@@ -24,7 +24,7 @@ public TokenDto tokenDto;
                 .contentType(ContentType.JSON)
                 .header("Authorization", token)
                 .when()
-                .put(BASE_URL + GET_ALL_CONTACTS_PATH)
+                .post(BASE_URL + GET_ALL_CONTACTS_PATH)
                 .thenReturn();
     }
 }
