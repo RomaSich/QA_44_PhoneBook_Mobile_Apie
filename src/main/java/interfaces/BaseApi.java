@@ -15,6 +15,7 @@ public interface BaseApi {
     String LOGIN_PATH = "/v1/user/login/usernamepassword";
 
     String GET_ALL_CONTACTS_PATH = "/v1/contacts";
+    String DELETE_CONTACT_BY_ID = "/v1/contacts/{id}";
 
     //Gson GSON = new Gson();
 
