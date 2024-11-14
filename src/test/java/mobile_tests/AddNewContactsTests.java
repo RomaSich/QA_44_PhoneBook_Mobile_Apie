@@ -3,6 +3,7 @@ package mobile_tests;
 import config.AppiumConfig;
 import dto.ContactDtoLombok;
 import dto.ContactsDto;
+import dto.ErrorMessageDto;
 import dto.UserDto;
 import helper.HelperApiMobile;
 import io.restassured.response.Response;
@@ -74,7 +75,7 @@ AddNewContactScreen addNewContactScreen;
                 break;
             }
         }
-        System.out.println("--. " + flag);
+        System.out.println("--> " + flag);
         Assert.assertTrue(flag);
     }
     @Test
@@ -83,14 +84,26 @@ AddNewContactScreen addNewContactScreen;
         ContactDtoLombok contact = ContactDtoLombok.builder()
                 .name(generateString(5)).
                 lastName(generateString(10)).
-                email(generateString(12)).
+                email("wrong email").
                 phone(generatePhone(10)).
                 address(generateString(8)+" app."+generatePhone(2)).
                 description(generateString(10))
                 .build();
         addNewContactScreen.typeContactForm(contact);
         addNewContactScreen.clickBtnCreateContact();
-        Assert.assertTrue(new ErrorScreen(driver).validateErrorMessage("email=must be a well",5));
+        HelperApiMobile helperApiMobile = new HelperApiMobile();
+        helperApiMobile.login(user.getUsername(), user.getPassword());
+        Response responseGet = helperApiMobile.getUserContactsResponse();
+        ContactsDto contacts = responseGet.as(ContactsDto.class);
+        boolean flag = true;
+        for (ContactDtoLombok c:contacts.getContacts())
+        {
+            if (c.equals(contact)) {
+                flag=false;
+                break;
+            }
+        } System.out.println("--> Contact exists: " + flag);
+Assert.assertTrue(flag);
     }
     @Test
     public void addNewContactNegativeTest_wrongPhone()
@@ -99,13 +112,25 @@ AddNewContactScreen addNewContactScreen;
                 .name(generateString(6)).
                 lastName(generateString(10)).
                 email(generateEmail(12)).
-                phone(generateString(10)).
+                phone("wrong phone").
                 address(generateString(8)+" app."+generatePhone(2)).
                 description(generateString(10))
                 .build();
         addNewContactScreen.typeContactForm(contact);
         addNewContactScreen.clickBtnCreateContact();
-        Assert.assertTrue(new ErrorScreen(driver)
-         .validateErrorMessage("Phone number must contain only digits! ",5));
+        HelperApiMobile helperApiMobile = new HelperApiMobile();
+        helperApiMobile.login(user.getUsername(), user.getPassword());
+        Response responseGet = helperApiMobile.getUserContactsResponse();
+        ContactsDto contacts = responseGet.as(ContactsDto.class);
+        boolean flag = true;
+        for (ContactDtoLombok c:contacts.getContacts())
+        {
+            if (c.equals(contact)) {
+                flag=false;
+                break;
+            }
+        } System.out.println("--> Contact exists: " + flag);
+        Assert.assertTrue(flag);
+
     }
 }
