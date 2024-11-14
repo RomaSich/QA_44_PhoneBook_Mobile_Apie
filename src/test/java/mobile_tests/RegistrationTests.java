@@ -9,7 +9,7 @@ import screens.ContactsScreen;
 import screens.ErrorScreen;
 import screens.SplashScreen;
 import static helper.RandomUtils.*;
-
+import static helper.PropertiesReader.getProperty;
 public class RegistrationTests extends AppiumConfig {
 
 
@@ -52,5 +52,19 @@ public class RegistrationTests extends AppiumConfig {
         authenticationScreen.clickBtnRegistration();
         Assert.assertTrue( new ErrorScreen(driver)
                 .validateErrorMessage("Must contain at least",5));
+    }
+
+    @Test
+    public void registrationNegativeTest_duplicateUser() {
+        UserDto user = UserDto.builder()
+                .username(getProperty("data.properties","email"))
+                .password(getProperty("data.properties","password"))
+                .build();
+        new SplashScreen(driver).goToAuthScreen();
+        AuthenticationScreen authenticationScreen = new AuthenticationScreen(driver);
+        authenticationScreen.typeAuthenticationForm(user);
+        authenticationScreen.clickBtnRegistration();
+        Assert.assertTrue( new ErrorScreen(driver)
+                .validateErrorMessage("User already exists",5));
     }
 }
