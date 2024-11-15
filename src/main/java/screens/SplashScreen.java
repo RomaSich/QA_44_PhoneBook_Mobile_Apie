@@ -36,4 +36,19 @@ public class SplashScreen extends BaseScreen{
         }
 
     }
+
+    public boolean validateSplashScreenToDisappear(long expectedTime) {
+
+        long startTime = System.currentTimeMillis();
+        long endTime = 0;
+        if(
+        new WebDriverWait(driver, 5)
+                .until(ExpectedConditions.invisibilityOf(versionApp)))
+        endTime = System.currentTimeMillis();
+        long splashDuration = endTime-startTime;
+        if(splashDuration<=expectedTime)
+            return true;
+        else return false;
+
+    }
 }

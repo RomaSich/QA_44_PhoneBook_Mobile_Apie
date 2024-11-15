@@ -1,6 +1,7 @@
 package mobile_tests;
 
 import config.AppiumConfig;
+import data_provider.ContactDP;
 import dto.ContactDtoLombok;
 import dto.ContactsDto;
 import dto.ErrorMessageDto;
@@ -12,12 +13,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import screens.*;
 
+import java.util.Arrays;
+
 import static helper.PropertiesReader.getProperty;
 import static helper.RandomUtils.*;
 import static helper.RandomUtils.generateString;
 
 public class AddNewContactsTests extends AppiumConfig {
-
 AddNewContactScreen addNewContactScreen;
     UserDto user = UserDto.builder()
             .username(getProperty("data.properties", "email"))
@@ -105,7 +107,7 @@ AddNewContactScreen addNewContactScreen;
         } System.out.println("--> Contact exists: " + flag);
 Assert.assertTrue(flag);
     }
-    @Test
+    @Test(dataProvider = "addNewContactDPFile", dataProviderClass = ContactDP.class)
     public void addNewContactNegativeTest_wrongPhone()
     {
         ContactDtoLombok contact = ContactDtoLombok.builder()
@@ -122,15 +124,51 @@ Assert.assertTrue(flag);
         helperApiMobile.login(user.getUsername(), user.getPassword());
         Response responseGet = helperApiMobile.getUserContactsResponse();
         ContactsDto contacts = responseGet.as(ContactsDto.class);
-        boolean flag = true;
-        for (ContactDtoLombok c:contacts.getContacts())
-        {
-            if (c.equals(contact)) {
-                flag=false;
-                break;
-            }
-        } System.out.println("--> Contact exists: " + flag);
-        Assert.assertTrue(flag);
+//        boolean flag = true;
+//        for (ContactDtoLombok c:contacts.getContacts())
+//        {
+//            if (c.equals(contact)) {
+//                flag=false;
+//                break;
+//            }
+//        } System.out.println("--> Contact exists: " + flag);
+        int numContacts = Arrays.asList(contacts.getContacts()).indexOf(contact);
+        System.out.println(numContacts);
+        Assert.assertTrue(numContacts!=-1);
 
     }
+    @Test(dataProvider = "addNewContactDPFile", dataProviderClass = ContactDP.class)
+    public void addNewContactNegativeTest_emptyFields(ContactDtoLombok contact)
+    {
+        addNewContactScreen.typeContactForm(contact);
+        addNewContactScreen.clickBtnCreateContact();
+        Assert.assertTrue(new ErrorScreen(driver)
+                .validateErrorMessage("must not be blank",5)
+        || new ErrorScreen(driver)
+                .validateErrorMessage("well-formed email address",5)
+        ||new ErrorScreen(driver)
+                .validateErrorMessage("phone number must contain",5));
+    }
+    @Test
+    public void addNewContactNegativeTest_duplicateContact()
+    {
+        HelperApiMobile helperApiMobile = new HelperApiMobile();
+        helperApiMobile.login(user.getUsername(),user.getPassword());
+        Response responseGet = helperApiMobile.getUserContactsResponse();
+        if (responseGet.getStatusCode()==200) {
+            ContactsDto contactsDto = responseGet.as(ContactsDto.class);
+            ContactDtoLombok contactApi = contactsDto.getContacts()[0];
+            ContactDtoLombok contact = ContactDtoLombok.builder()
+                    .name(contactApi.getName()).
+                    lastName(contactApi.getLastName()).
+                    email(contactApi.getEmail()).
+                    phone(contactApi.getPhone()).
+                    address(contactApi.getAddress()).
+                    description(contactApi.getDescription())
+                    .build();
+            addNewContactScreen.typeContactForm(contact);
+            addNewContactScreen.clickBtnCreateContact();
+        }
+    }
+
 }

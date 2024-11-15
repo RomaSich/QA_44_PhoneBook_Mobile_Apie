@@ -29,4 +29,9 @@ public class ContactsScreen extends BaseScreen{
     {
         return textInElementPresent(popUpMessage, "Contact was added!",5);
     }
+
+public void deleteContact(){
 }
+}
+
+
