@@ -48,7 +48,7 @@ AddNewContactScreen addNewContactScreen;
                 .build();
         addNewContactScreen.typeContactForm(contact);
         addNewContactScreen.clickBtnCreateContact();
-        Assert.assertTrue(new ContactsScreen(driver).validatePopMessage());
+        Assert.assertTrue(new ContactsScreen(driver).validatePopMessage("Contact was added!"));
     }
 
     @Test

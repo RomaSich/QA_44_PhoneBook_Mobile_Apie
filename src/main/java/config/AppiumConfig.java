@@ -12,7 +12,7 @@ import java.net.URL;
 
 public class AppiumConfig {
     public static AppiumDriver<AndroidElement> driver;
-
+public int height = 0, width=0;
     // "platformName": "Android",
 //         "deviceName": "Nex5",
 //         "platformVersion": "8.0",
@@ -33,6 +33,11 @@ public class AppiumConfig {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+
+        height = driver.manage().window().getSize().getHeight();
+        width = driver.manage().window().getSize().getWidth();
+        System.out.println("width -> "+width+" X "+ "height -> "+height);
+
     }
     @AfterMethod
     public void ternDown()
