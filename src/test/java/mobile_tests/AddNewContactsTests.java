@@ -11,6 +11,7 @@ import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 import screens.*;
 
 import java.util.Arrays;
@@ -20,7 +21,9 @@ import static helper.RandomUtils.*;
 import static helper.RandomUtils.generateString;
 
 public class AddNewContactsTests extends AppiumConfig {
+    SoftAssert softAssert = new SoftAssert();
 AddNewContactScreen addNewContactScreen;
+ContactsScreen contactsScreen;
     UserDto user = UserDto.builder()
             .username(getProperty("data.properties", "email"))
             .password(getProperty("data.properties", "password"))
@@ -32,7 +35,8 @@ AddNewContactScreen addNewContactScreen;
         AuthenticationScreen authenticationScreen = new AuthenticationScreen(driver);
         authenticationScreen.typeAuthenticationForm(user);
         authenticationScreen.clickBtnLogin();
-        new ContactsScreen(driver).clickBtnAddNewContact();
+        contactsScreen= new  ContactsScreen(driver);
+        contactsScreen.clickBtnAddNewContact();
         addNewContactScreen=new AddNewContactScreen(driver);
     }
     @Test
@@ -169,6 +173,23 @@ Assert.assertTrue(flag);
             addNewContactScreen.typeContactForm(contact);
             addNewContactScreen.clickBtnCreateContact();
         }
+    }
+    @Test
+    public void addNewContactPositiveTest_validateUIListContact()
+    {
+        ContactDtoLombok contact = ContactDtoLombok.builder()
+                .name("!!!"+generateString(5)).
+                lastName(generateString(10)).
+                email(generateEmail(12)).
+                phone(generatePhone(10)).
+                address(generateString(8)+" app."+generatePhone(2)).
+                description(generateString(10))
+                .build();
+        addNewContactScreen.typeContactForm(contact);
+        addNewContactScreen.clickBtnCreateContact();
+        softAssert.assertTrue(new ContactsScreen(driver).validatePopMessage("Contact was added!"));
+        softAssert.assertTrue(contactsScreen.validateUIListContact(contact));
+        softAssert.assertAll();
     }
 
 }

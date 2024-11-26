@@ -5,6 +5,7 @@ import dto.ContactsDto;
 import dto.UserDto;
 import helper.HelperApiMobile;
 import io.restassured.response.Response;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import screens.AddNewContactScreen;
@@ -45,5 +46,6 @@ public class DeleteContactTests extends AppiumConfig {
         ContactsDto contactsDtoAfter = responseGetAfter.as(ContactsDto.class);
         int quantityContactsAfter = contactsDtoAfter.getContacts().length;
         System.out.println(quantityContactsBefore+" X "+quantityContactsAfter);
+        Assert.assertEquals(quantityContactsBefore-1,quantityContactsAfter);
     }
 }

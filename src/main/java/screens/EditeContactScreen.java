@@ -23,7 +23,7 @@ public class EditeContactScreen extends BaseScreen{
     @FindBy(id = "com.sheygam.contactapp:id/inputDesc")
     AndroidElement inputDescription;
     @FindBy(id="com.sheygam.contactapp:id/updateBtn")
-    AndroidElement btnUpdateContact;
+    AndroidElement btnEditeContact;
 
     public void typeEditeForm(ContactDtoLombok contact)
     {
@@ -40,11 +40,8 @@ public class EditeContactScreen extends BaseScreen{
         inputAddress.sendKeys(contact.getAddress());
         inputDescription.clear();
         inputDescription.sendKeys(contact.getDescription());
-
+        btnEditeContact.click();
+        pause(3);
     }
 
-    public void clickBtnUpdateContact() {
-
-        btnUpdateContact.click();
-    }
 }

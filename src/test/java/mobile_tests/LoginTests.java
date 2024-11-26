@@ -2,6 +2,7 @@ package mobile_tests;
 
 import config.AppiumConfig;
 import dto.UserDto;
+import helper.RetryAnalyzer;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -33,8 +34,8 @@ public class LoginTests extends AppiumConfig {
         authenticationScreen.clickBtnLogin();
         Assert.assertTrue( new ContactsScreen(driver).validateHeader());
     }
-    @Test
-    public void loginNegativeTest_unregEmail()
+    @Test(retryAnalyzer = RetryAnalyzer.class)
+    public void loginNegativeTest_unRegEmail()
     {
         UserDto user = UserDto.builder()
                 .username(generateEmail(10))
